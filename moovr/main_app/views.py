@@ -9,7 +9,7 @@ class JobsView(APIView):
     serializer_class = JobSerializer
     
     def get(self, request):
-        job = [ {"name": job.name, "start_location": job.start_location, "end_location": job.end_location} 
+        job = [ {"id": job.id, "name": job.name, "start_location": job.start_location, "end_location": job.end_location} 
         for job in Job.objects.all()]
         return Response(job)
     
