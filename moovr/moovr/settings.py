@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'main_app',
     'rest_framework',
     'corsheaders',
+    'rest_framework_simplejwt.token_blacklist',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -127,7 +128,15 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [ "rest_framework.permissions.AllowAny" ]
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+LOGIN_URL = 'home'
+
+LOGIN_REDIRECT_URL = 'jobs-index'
+
+LOGOUT_REDIRECT_URL = 'home'

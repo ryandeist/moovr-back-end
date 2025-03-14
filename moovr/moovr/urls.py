@@ -20,5 +20,6 @@ from main_app.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('jobs/', JobsView.as_view(), name = 'all_jobs'),
+    path('', include('main_app.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

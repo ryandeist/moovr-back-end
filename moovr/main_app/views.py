@@ -1,10 +1,14 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from . models import *
+from .models import Job
 from . serializer import *
 from rest_framework.response import Response
 
 # Create your views here.
+class HomeView(APIView):
+    def get(self, request):
+        return Response("Hello World")
+
 class JobsView(APIView):
     serializer_class = JobSerializer
     
@@ -13,9 +17,9 @@ class JobsView(APIView):
         for job in Job.objects.all()]
         return Response(job)
     
-    def post(self, request):
-        serializer = JobSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+    # def post(self, request):
+    #     serializer = JobSerializer(data=request.data)
+    #     if serializer.is_valid(raise_exception=True):
+    #         serializer.save()
+    #         return Response(serializer.data)
 
