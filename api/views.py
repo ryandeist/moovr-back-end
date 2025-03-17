@@ -62,3 +62,13 @@ class JobListView(APIView):
         return Response(serializer.data)
 
 
+class JobDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, job_id):
+        try:
+            job = Job.objects.get(id=job_id, user=request.user)
+            serializer = JobSerializer(job)
+            return Response(serializer.data, status=200)
+        except Item.DoesNotExist:
+            return Response({'error': 'Item not found'}, status=404)
