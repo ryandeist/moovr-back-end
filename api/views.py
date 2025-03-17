@@ -1,39 +1,16 @@
 from django.shortcuts import render
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import SignupSerializer, JobSerializer
 from .models import Job
 # Create your views here.
-
-class JobListCreateView(generics.ListCreateAPIView):
-    serializer_class = JobSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_user_jobs(self):
-        user = self.request.user
-        return Job.objects.filter(user=user)
-    
-    def create_job(self, serializer):
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
-        else:
-            print(serializer.errors)
-
-class JobDeleteView(generics.DestroyAPIView):
-    serializer_class = JobSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_user_jobs(self):
-        user = self.request.user
-        return Job.objects.filter(user=user)
     
 class SignupView(APIView):
     def post(self, request):
@@ -74,3 +51,14 @@ class LoginView(APIView):
                 }
             })
         return Response({"error": "Invalid Credentials."}, status=400)
+
+class JobListView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user = request.user
+        jobs = Job.objects.filter(user=user)
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data)
+
+
