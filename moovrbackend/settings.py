@@ -40,7 +40,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "TOKEN_OBTAIN_SERIALIZER": 'api.serializers.JobSerializer',
+    "TOKEN_OBTAIN_SERIALIZER": 'api.serializers.UserSerializer',
 }
 
 # Application definition

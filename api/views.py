@@ -1,3 +1,4 @@
+# Imports
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -10,8 +11,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import SignupSerializer, JobSerializer
 from .models import Job
-# Create your views here.
-    
+
+# Authorization Views
 class SignupView(APIView):
     def post(self, request):
         if request.data['password'] != request.data['passwordConfirm']:
@@ -32,7 +33,7 @@ class SignupView(APIView):
                 }
             }, status=status.HTTP_201_CREATED)
             
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Sign Up Failed."}, status=400)
 
 class LoginView(APIView):
     def post(self, request):
@@ -52,22 +53,26 @@ class LoginView(APIView):
             })
         return Response({"error": "Invalid Credentials."}, status=400)
 
+# Job Model Views
 class JobListView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        user = request.user
-        jobs = Job.objects.filter(user=user)
-        serializer = JobSerializer(jobs, many=True)
-        return Response(serializer.data)
+        try:
+            user = request.user
+            jobs = Job.objects.filter(user=user)
+            serializer = JobSerializer(jobs, many=True)
+            return Response(serializer.data)
+        except: 
+            return Response({'error': 'Unable to Get Jobs'}, status=400)
 
 
 class JobDetailView(APIView):
     permission_classes = [IsAuthenticated]
     
-    def get(self, request, job_id):
+    def get(self, request, pk):
         try:
-            job = Job.objects.get(id=job_id, user=request.user)
+            job = Job.objects.get(pk=pk, user=request.user)
             serializer = JobSerializer(job)
             return Response(serializer.data, status=200)
         except Item.DoesNotExist:

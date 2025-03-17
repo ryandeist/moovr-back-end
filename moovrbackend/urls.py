@@ -1,8 +1,10 @@
+# Imports
 from django.contrib import admin
 from django.urls import path, include
 from api.views import SignupView, LoginView
 from rest_framework_simplejwt.views import TokenRefreshView
 
+# Moovr Backend URL Patterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/signup/', SignupView.as_view(), name='signup'),

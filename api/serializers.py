@@ -1,7 +1,9 @@
+# Imports
 from django.contrib.auth.models import User
 from .models import Job
 from rest_framework import serializers
 
+# New User Serializer
 class SignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -11,7 +13,8 @@ class SignupSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
-    
+
+# Job Serializer
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
