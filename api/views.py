@@ -88,8 +88,9 @@ class JobDetailView(APIView):
     def put(self, request, pk):
         try:
             job = Job.objects.get(pk=pk, user=request.user)
-            serializer = JobSerializer(data=request.data)
+            serializer = JobSerializer(job, data=request.data)
             if serializer.is_valid():
+                serializer.save()
                 return Response(serializer.data, status=200)
         except:
             return Response({'error': 'Error updating job'}, status=400)
