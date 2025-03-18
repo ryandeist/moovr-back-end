@@ -62,7 +62,7 @@ class JobListView(APIView):
             user = request.user
             jobs = Job.objects.filter(user=user)
             serializer = JobSerializer(jobs, many=True)
-            return Response(serializer.data)
+            return Response(serializer.data, status=200)
         except: 
             return Response({'error': 'Unable to Get Jobs'}, status=400)
 
@@ -75,15 +75,24 @@ class JobDetailView(APIView):
             serializer = JobSerializer(job)
             return Response(serializer.data, status=200)
         except Job.DoesNotExist:
-            return Response({'error': 'Job not found'}, status=404)
+            return Response({'error': 'Error getting job.'}, status=400)
 
     def delete(self, request, pk):
         try:
             job = Job.objects.get(pk=pk, user=request.user)
             job.delete()
             return Response({'message': 'Job Deleted Successfully.'}, status=204)
-        except Job.DoesNotExist:
-            return Response({'error': 'Job not found'}, status=404)
+        except:
+            return Response({'error': 'Error deleting Job'}, status=400)
+        
+    def put(self, request, pk):
+        try:
+            job = Job.objects.get(pk=pk, user=request.user)
+            serializer = JobSerializer(data=request.data)
+            if serializer.is_valid():
+                return Response(serializer.data, status=200)
+        except:
+            return Response({'error': 'Error updating job'}, status=400)
 
 class JobCreateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -95,4 +104,4 @@ class JobCreateView(APIView):
                 serializer.save(user=request.user)
                 return Response(serializer.data, status=201)
         except Job.DoesNotExist:
-            return Response({'error': 'Job not created'}, status=404)
+            return Response({'error': 'Job not created'}, status=400)
