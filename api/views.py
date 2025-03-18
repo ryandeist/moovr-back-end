@@ -9,8 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import SignupSerializer, JobSerializer
-from .models import Job
+from .serializers import SignupSerializer, JobSerializer, BoxSerializer
+from .models import Job, Box
 
 # Authorization Views
 class SignupView(APIView):
@@ -64,7 +64,7 @@ class JobListView(APIView):
             serializer = JobSerializer(jobs, many=True)
             return Response(serializer.data, status=200)
         except: 
-            return Response({'error': 'Unable to Get Jobs'}, status=400)
+            return Response({'error': 'Unable to get Jobs'}, status=400)
 
 class JobDetailView(APIView):
     permission_classes = [IsAuthenticated]
@@ -106,3 +106,16 @@ class JobCreateView(APIView):
                 return Response(serializer.data, status=201)
         except Job.DoesNotExist:
             return Response({'error': 'Job not created'}, status=400)
+
+# Box Views
+class BoxListView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, pk):
+        try:
+            job = Job.objects.get(id=pk, user=request.user)
+            boxes = job.boxes.all()
+            serializer = BoxSerializer(boxes, many=True)
+            return Response(serializer.data, status=200)
+        except: 
+            return Response({'error': 'Unable to get Boxes'}, status=400)

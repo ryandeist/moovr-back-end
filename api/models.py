@@ -32,7 +32,7 @@ class Box(models.Model):
     box_full = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, related_name='boxes', on_delete=models.CASCADE)
     
     def __str__(self):
         return self.box_name

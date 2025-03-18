@@ -1,6 +1,6 @@
 # Imports
 from django.contrib.auth.models import User
-from .models import Job
+from .models import Job, Box
 from rest_framework import serializers
 
 # New User Serializer
@@ -20,3 +20,10 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = ['id', 'customer_name', 'start_location', 'end_location', 'created_at', 'date', 'user']
         extra_kwargs = {'user': {'read_only': True}}
+
+# Box Serializer
+class BoxSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Box
+        fields = ['id', 'box_name', 'size', 'box_full', 'created_at', 'job']
+        extra_kwargs = {'job': {'read_only': True}}
