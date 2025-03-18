@@ -18,5 +18,5 @@ class SignupSerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
-        fields = ['id', 'name', 'start_location', 'end_location', 'created_at', 'date', 'user']
+        fields = ['id', 'customer_name', 'start_location', 'end_location', 'created_at', 'date', 'user']
         extra_kwargs = {'user': {'read_only': True}}

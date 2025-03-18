@@ -75,17 +75,18 @@ class JobDetailView(APIView):
             job = Job.objects.get(pk=pk, user=request.user)
             serializer = JobSerializer(job)
             return Response(serializer.data, status=200)
-        except Item.DoesNotExist:
+        except Job.DoesNotExist:
             return Response({'error': 'Job not found'}, status=404)
         
 class JobCreateView(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
+        print(request.data)
         try:
             serializer = JobSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(user=request.user)
                 return Response(serializer.data, status=201)
-        except Item.DoesNotExist:
+        except Job.DoesNotExist:
             return Response({'error': 'Job not created'}, status=404)
