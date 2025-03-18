@@ -66,7 +66,6 @@ class JobListView(APIView):
         except: 
             return Response({'error': 'Unable to Get Jobs'}, status=400)
 
-
 class JobDetailView(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -77,12 +76,19 @@ class JobDetailView(APIView):
             return Response(serializer.data, status=200)
         except Job.DoesNotExist:
             return Response({'error': 'Job not found'}, status=404)
-        
+
+    def delete(self, request, pk):
+        try:
+            job = Job.objects.get(pk=pk, user=request.user)
+            job.delete()
+            return Response({'message': 'Job Deleted Successfully.'}, status=204)
+        except Job.DoesNotExist:
+            return Response({'error': 'Job not found'}, status=404)
+
 class JobCreateView(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        print(request.data)
         try:
             serializer = JobSerializer(data=request.data)
             if serializer.is_valid():
