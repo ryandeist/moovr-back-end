@@ -133,3 +133,23 @@ class BoxDetailView(APIView):
             return Response(serializer.data, status=200)
         except: 
             return Response({'error': 'Unable to get Boxes'}, status=400)
+        
+class BoxCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, job_id):
+        try:
+            job = Job.objects.get(id=job_id)
+            serializer = BoxSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(job=job)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                print("validation errors:", serializer.errors)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Job.DoesNotExist:
+            print("Job not found")
+            return Response({'error': 'Job not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as err:
+            print("Error during box creation:", str(err))
+            return Response({'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
