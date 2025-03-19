@@ -15,7 +15,7 @@ from .models import Job, Box
 # Authorization Views
 class SignupView(APIView):
     def post(self, request):
-        if request.data['password'] != request.data['passwordConfirm']:
+        if request.data["password"] != request.data["passwordConfirm"]:
             return Response({"error": "Passwords do not match."}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
@@ -76,7 +76,7 @@ class JobListView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as err: 
             print("Error Fetching Jobs:", str(err))
-            return Response({'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
 
 class JobDetailView(APIView):
     permission_classes = [IsAuthenticated]
@@ -88,22 +88,22 @@ class JobDetailView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Job.DoesNotExist:
             print("Job not found")
-            return Response({'error': 'Job Not Found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Job Not Found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as err:
             print("Error fetching Job:", str(err))
-            return Response({'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, job_id):
         try:
             job = Job.objects.get(id=job_id, user=request.user)
             job.delete()
-            return Response({'message': 'Job Deleted Successfully.'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"message": "Job Deleted Successfully."}, status=status.HTTP_204_NO_CONTENT)
         except Job.DoesNotExist:
             print("Job not found")
-            return Response({'error': 'Job Not Found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Job Not Found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as err:
             print("Error deleting Job:", str(err))
-            return Response({'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
         
     def put(self, request, job_id):
         try:
@@ -117,10 +117,10 @@ class JobDetailView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Job.DoesNotExist:
             print("Job not found")
-            return Response({'error': 'Job Not Found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Job Not Found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as err:
             print("Error updating Job:", str(err))
-            return Response({'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
 
 class JobCreateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -136,7 +136,7 @@ class JobCreateView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as err:
             print("Error during job creation:", str(err))
-            return Response({'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
 
 # Box Views
 class BoxListView(APIView):
@@ -150,10 +150,10 @@ class BoxListView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Job.DoesNotExist:
             print("Job not found")
-            return Response({'error': 'Job Not Found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Job Not Found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as err: 
             print("Error Fetching Boxes:", str(err))
-            return Response({'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
         
 class BoxDetailView(APIView):
     permission_classes = [IsAuthenticated]
@@ -168,11 +168,23 @@ class BoxDetailView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Job.DoesNotExist:
             print("Job not found")
-            return Response({'error': 'Job Not Found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Job Not Found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as err: 
             print("Error Fetching Box:", str(err))
-            return Response({'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, job_id, box_id):
+        try:
+            box = Box.objects.get(id=box_id)
+            box.delete()
+            return Response({"message": "Box deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        except Box.DoesNotExist:
+            print("Box not found")
+            return Response({"error": "Box Not Found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as err:
+            print("Error Deleting Box:", str(err))
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
+            
 class BoxCreateView(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -188,7 +200,7 @@ class BoxCreateView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Job.DoesNotExist:
             print("Job not found")
-            return Response({'error': 'Job not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as err:
             print("Error during box creation:", str(err))
-            return Response({'error': str(err)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
