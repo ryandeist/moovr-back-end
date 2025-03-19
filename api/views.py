@@ -17,13 +17,13 @@ class SignupView(APIView):
     def post(self, request):
         if request.data["password"] != request.data["passwordConfirm"]:
             return Response({"error": "Passwords do not match."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         try:
             serializer =SignupSerializer(data=request.data)
             if serializer.is_valid():
                 user = serializer.save()
                 refresh = RefreshToken.for_user(user)
-                
+
                 return Response({
                     "message": "User created successfully.", 
                     "refresh": str(refresh),
@@ -46,7 +46,7 @@ class LoginView(APIView):
             username = request.data.get("username")
             password = request.data.get("password")
             user = authenticate(username=username, password=password)
-            
+
             if user is not None:
                 refresh = RefreshToken.for_user(user)
                 return Response({
@@ -67,7 +67,7 @@ class LoginView(APIView):
 # Job Model Views
 class JobListView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         try:
             user = request.user
@@ -80,7 +80,7 @@ class JobListView(APIView):
 
 class JobDetailView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, job_id):
         try:
             job = Job.objects.get(id=job_id, user=request.user)
@@ -104,7 +104,7 @@ class JobDetailView(APIView):
         except Exception as err:
             print("Error deleting Job:", str(err))
             return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
-        
+
     def put(self, request, job_id):
         try:
             job = Job.objects.get(id=job_id, user=request.user)
@@ -124,7 +124,7 @@ class JobDetailView(APIView):
 
 class JobCreateView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request):
         try:
             serializer = JobSerializer(data=request.data)
@@ -141,7 +141,7 @@ class JobCreateView(APIView):
 # Box Views
 class BoxListView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, job_id):
         try:
             job = Job.objects.get(id=job_id)
@@ -154,16 +154,14 @@ class BoxListView(APIView):
         except Exception as err: 
             print("Error Fetching Boxes:", str(err))
             return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
-        
+
 class BoxDetailView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, job_id, box_id):
         try:
             job = Job.objects.get(id=job_id)
-            print(job)
             box = job.boxes.get(id=box_id)
-            print(box)
             serializer = BoxSerializer(box)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Job.DoesNotExist:
@@ -172,7 +170,7 @@ class BoxDetailView(APIView):
         except Exception as err: 
             print("Error Fetching Box:", str(err))
             return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def delete(self, request, job_id, box_id):
         try:
             box = Box.objects.get(id=box_id)
@@ -184,7 +182,25 @@ class BoxDetailView(APIView):
         except Exception as err:
             print("Error Deleting Box:", str(err))
             return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
-            
+
+    def put(self, request, job_id, box_id):
+        try:
+            job = Job.objects.get(id=job_id)
+            box = Box.objects.get(id=box_id, job=job)
+            serializer = BoxSerializer(box, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                print("validation errors:", serializer.errors)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Box.DoesNotExist:
+            print("Box not found.")
+            return Response({"error": "Box Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as err:
+            print("Error updating Box", str(err))
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
+
 class BoxCreateView(APIView):
     permission_classes = [IsAuthenticated]
     

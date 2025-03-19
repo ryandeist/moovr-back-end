@@ -21,7 +21,7 @@ class BoxSerializer(serializers.ModelSerializer):
     class Meta:
         model = Box
         fields = ['id', 'box_name', 'size', 'size_display', 'box_full', 'created_at', 'job']
-        read_only_fields = ['job']
+        extra_kwargs = {'job': {'read_only': True}}
         
     def get_size_display(self, obj):
         return obj.get_size_display()
