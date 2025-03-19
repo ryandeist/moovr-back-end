@@ -69,25 +69,25 @@ class JobListView(APIView):
 class JobDetailView(APIView):
     permission_classes = [IsAuthenticated]
     
-    def get(self, request, pk):
+    def get(self, request, job_id):
         try:
-            job = Job.objects.get(pk=pk, user=request.user)
+            job = Job.objects.get(id=job_id, user=request.user)
             serializer = JobSerializer(job)
             return Response(serializer.data, status=200)
         except Job.DoesNotExist:
             return Response({'error': 'Error getting job.'}, status=400)
 
-    def delete(self, request, pk):
+    def delete(self, request, job_id):
         try:
-            job = Job.objects.get(pk=pk, user=request.user)
+            job = Job.objects.get(id=job_id, user=request.user)
             job.delete()
             return Response({'message': 'Job Deleted Successfully.'}, status=204)
         except:
             return Response({'error': 'Error deleting Job'}, status=400)
         
-    def put(self, request, pk):
+    def put(self, request, job_id):
         try:
-            job = Job.objects.get(pk=pk, user=request.user)
+            job = Job.objects.get(id=job_id, user=request.user)
             serializer = JobSerializer(job, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -111,11 +111,25 @@ class JobCreateView(APIView):
 class BoxListView(APIView):
     permission_classes = [IsAuthenticated]
     
-    def get(self, request, pk):
+    def get(self, request, job_id):
         try:
-            job = Job.objects.get(id=pk, user=request.user)
+            job = Job.objects.get(id=job_id)
             boxes = job.boxes.all()
             serializer = BoxSerializer(boxes, many=True)
+            return Response(serializer.data, status=200)
+        except: 
+            return Response({'error': 'Unable to get Boxes'}, status=400)
+        
+class BoxDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, job_id, box_id):
+        try:
+            job = Job.objects.get(id=job_id)
+            print(job)
+            box = job.boxes.get(id=box_id)
+            print(box)
+            serializer = BoxSerializer(box)
             return Response(serializer.data, status=200)
         except: 
             return Response({'error': 'Unable to get Boxes'}, status=400)
