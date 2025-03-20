@@ -9,8 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import SignupSerializer, JobSerializer, BoxSerializer
-from .models import Job, Box
+from .serializers import SignupSerializer, JobSerializer, BoxSerializer, ItemSerializer
+from .models import Job, Box, Item
 
 # Authorization Views
 class SignupView(APIView):
@@ -219,4 +219,21 @@ class BoxCreateView(APIView):
             return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as err:
             print("Error during box creation:", str(err))
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
+
+# Item Views
+class ItemListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, job_id, box_id,):
+        try:
+            box = Box.objects.get(id=box_id)
+            items = box.items.all()
+            serializer = ItemSerializer(items, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Box.DoesNotExist:
+            print("Box not found")
+            return Response({"error": "Box Not Found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as err: 
+            print("Error Fetching Items:", str(err))
             return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
