@@ -20,7 +20,7 @@ class BoxSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Box
-        fields = ['id', 'box_name', 'size', 'size_display', 'box_full', 'created_at', 'job']
+        fields = ['id', 'box_name', 'box_description','size', 'is_heavy', 'is_fragile', 'size_display', 'box_full', 'created_at', 'job']
         extra_kwargs = {'job': {'read_only': True}}
         
     def get_size_display(self, obj):
@@ -38,4 +38,4 @@ class JobSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ['id', 'name', 'description', 'created_at', 'box']
+        fields = ['id', 'name', 'description', 'created_at', 'box', 'is_heavy', 'is_fragile']

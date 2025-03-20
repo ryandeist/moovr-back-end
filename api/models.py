@@ -25,12 +25,15 @@ class Job(models.Model):
 
 class Box(models.Model):
     box_name = models.CharField(max_length=100)
+    box_description = models.TextField(max_length=250)
     size = models.CharField(
         max_length=1,
         choices=SIZES,
         default=SIZES[0][0]
         )
     box_full = models.BooleanField(default=False)
+    is_heavy = models.BooleanField(default=False)
+    is_fragile = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
     job = models.ForeignKey(Job, related_name='boxes', on_delete=models.CASCADE)

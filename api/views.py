@@ -225,11 +225,30 @@ class BoxCreateView(APIView):
 class ItemListView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, job_id, box_id,):
+    def get(self, request, job_id, box_id):
         try:
             box = Box.objects.get(id=box_id)
             items = box.items.all()
             serializer = ItemSerializer(items, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Box.DoesNotExist:
+            print("Box not found")
+            return Response({"error": "Box Not Found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as err: 
+            print("Error Fetching Items:", str(err))
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class ItemDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, job_id, box_id, item_id):
+        print (request)
+        print(job_id, box_id, item_id)
+        try:
+            box = Box.objects.get(id=box_id)
+            item = box.items.get(id=item_id)
+            serializer = ItemSerializer(item)
+            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Box.DoesNotExist:
             print("Box not found")
