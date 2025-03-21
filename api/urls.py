@@ -12,4 +12,5 @@ urlpatterns = [
     path('jobs/<int:job_id>/boxes/create/', views.BoxCreateView.as_view(), name='box-create'),
     path('jobs/<int:job_id>/boxes/<int:box_id>/items/', views.ItemListView.as_view(), name='item-list'),
     path('jobs/<int:job_id>/boxes/<int:box_id>/items/<int:item_id>/', views.ItemDetailView.as_view(), name='item-detail'),
+    path('jobs/<int:job_id>/boxes/<int:box_id>/items/create/', views.ItemCreateView.as_view(), name='item-list'),
 ]
