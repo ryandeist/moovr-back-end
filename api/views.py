@@ -254,6 +254,18 @@ class ItemDetailView(APIView):
             print("Error Fetching Items:", str(err))
             return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
         
+    def delete(self, request, job_id, box_id, item_id):
+        try:
+            item = Item.objects.get(id=item_id)
+            item.delete()
+            return Response({"message": "Item deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        except Item.DoesNotExist:
+            print("Item not found")
+            return Response({"error": "Item Not Found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as err:
+            print("Error Deleting Item:", str(err))
+            return Response({"error": str(err)}, status=status.HTTP_400_BAD_REQUEST)
+
 class ItemCreateView(APIView):
     permission_classes = [IsAuthenticated]
     
